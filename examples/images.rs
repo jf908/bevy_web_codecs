@@ -3,7 +3,7 @@ use bevy_web_codecs::WebCodecsPlugin;
 
 fn main() {
     App::new()
-        .add_plugins((DefaultPlugins, WebCodecsPlugin))
+        .add_plugins((DefaultPlugins, WebCodecsPlugin::default()))
         .add_systems(Startup, setup)
         .run();
 }
@@ -57,7 +57,14 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                     image: asset_server.load("gif.gif"),
                     ..default()
                 }
-            )
+            ),
+            (
+                image_node_size.clone(),
+                ImageNode {
+                    image: asset_server.load("avif.avif"),
+                    ..default()
+                }
+            ),
         ],
     ));
 }

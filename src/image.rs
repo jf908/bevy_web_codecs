@@ -1,17 +1,33 @@
-use std::collections::HashMap;
-use std::path::Path;
-
 use anyhow::Result;
-// use bevy::platform::collections::HashMap;
-use bevy_asset::io::Reader;
-use bevy_asset::{AssetLoader, LoadContext, RenderAssetUsages};
+use bevy_asset::{AssetLoader, LoadContext, RenderAssetUsages, io::Reader};
 use bevy_image::{Image, ImageSampler, TextureError};
+use bevy_platform::collections::HashMap;
 use image::DynamicImage;
-use js_sys::Uint8Array;
+use js_sys::Error;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use wasm_bindgen_futures::JsFuture;
-use web_sys::{ImageDecodeResult, ImageDecoder, ImageDecoderInit, VideoFrameCopyToOptions};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen(module = "/src/image.js")]
+extern "C" {
+    type BevyImageDecoder;
+
+    #[wasm_bindgen(constructor)]
+    fn new() -> BevyImageDecoder;
+
+    #[wasm_bindgen(static_method_of = BevyImageDecoder)]
+    fn supportsImageDecoder() -> bool;
+
+    #[wasm_bindgen(catch, method)]
+    async fn decode(this: &BevyImageDecoder, data: &[u8], mime_type: &str) -> Result<(), Error>;
+    #[wasm_bindgen(method)]
+    fn width(this: &BevyImageDecoder) -> u32;
+    #[wasm_bindgen(method)]
+    fn height(this: &BevyImageDecoder) -> u32;
+
+    #[wasm_bindgen(catch, method)]
+    async fn copy(this: &BevyImageDecoder, buffer: &mut [u8]) -> Result<(), Error>;
+}
 
 /// Possible errors that can be produced by [`OggLoader`]
 #[non_exhaustive]
@@ -54,23 +70,38 @@ pub struct WebImageLoader {
     extensions: Vec<&'static str>,
 }
 
-impl Default for WebImageLoader {
-    fn default() -> Self {
-        let mut mime_types = HashMap::new();
-        mime_types.insert("jpg", "image/jpeg");
-        mime_types.insert("jpeg", "image/jpeg");
-        mime_types.insert("png", "image/png");
-        mime_types.insert("gif", "image/gif");
-        mime_types.insert("webp", "image/webp");
-        mime_types.insert("bmp", "image/bmp");
-        mime_types.insert("avif", "image/avif");
-
+impl WebImageLoader {
+    pub fn new(mime_types: HashMap<&'static str, &'static str>) -> Self {
         let extensions = mime_types.keys().copied().collect();
 
         Self {
             mime_types,
             extensions,
         }
+    }
+
+    pub fn supported_mime_types() -> HashMap<&'static str, &'static str> {
+        let mut mime_types = HashMap::new();
+        mime_types.insert("jpg", "image/jpeg");
+        mime_types.insert("jpeg", "image/jpeg");
+        mime_types.insert("png", "image/png");
+        mime_types.insert("gif", "image/gif");
+        mime_types.insert("webp", "image/webp");
+        mime_types.insert("svg", "image/svg+xml");
+        mime_types.insert("bmp", "image/bmp");
+        mime_types.insert("avif", "image/avif");
+
+        mime_types
+    }
+
+    pub fn supports_image_decoder() -> bool {
+        BevyImageDecoder::supportsImageDecoder()
+    }
+}
+
+impl Default for WebImageLoader {
+    fn default() -> Self {
+        Self::new(Self::supported_mime_types())
     }
 }
 
@@ -100,7 +131,33 @@ impl AssetLoader for WebImageLoader {
         };
 
         let path = load_context.path();
-        let dyn_img = decode_image(mime_type, path, &bytes).await?;
+
+        let decoder = BevyImageDecoder::new();
+        decoder
+            .decode(&bytes, mime_type)
+            .await
+            .map_err(|err| FileTextureError {
+                error: TextureError::TranscodeError(err.to_string().into()),
+                path: format!("{}", path.display()),
+            })?;
+
+        let width = decoder.width();
+        let height = decoder.height();
+
+        let mut buffer: Vec<u8> = vec![0; (width * height * 4) as usize];
+
+        decoder
+            .copy(&mut buffer)
+            .await
+            .map_err(|err| FileTextureError {
+                error: TextureError::TranscodeError(err.to_string().into()),
+                path: format!("{}", path.display()),
+            })?;
+
+        let dyn_img = DynamicImage::ImageRgba8(
+            image::RgbaImage::from_raw(width, height, buffer)
+                .expect("Invalid image size when creating RgbaImage"),
+        );
 
         Ok(Image::from_dynamic(dyn_img, true, settings.asset_usage))
     }
@@ -115,56 +172,4 @@ impl AssetLoader for WebImageLoader {
 pub struct FileTextureError {
     error: TextureError,
     path: String,
-}
-
-async fn decode_image(
-    mime_type: &str,
-    path: &Path,
-    bytes: &[u8],
-) -> Result<DynamicImage, WebImageLoaderError> {
-    let array = Uint8Array::from(bytes);
-
-    let supported = JsFuture::from(ImageDecoder::is_type_supported(mime_type))
-        .await
-        .map(|v| v.as_bool().unwrap_or(false))
-        .unwrap_or(false);
-
-    if !supported {
-        return Err(WebImageLoaderError::FileTexture(FileTextureError {
-            error: TextureError::InvalidImageMimeType(mime_type.to_string()),
-            path: format!("{}", path.display()),
-        }));
-    }
-
-    let image_decoder_init = ImageDecoderInit::new(array.as_ref(), mime_type);
-    let image_decoder = ImageDecoder::new(&image_decoder_init).map_err(|err| FileTextureError {
-        error: TextureError::TranscodeError(err.as_string().unwrap_or_default()),
-        path: format!("{}", path.display()),
-    })?;
-
-    let decoded = JsFuture::from(image_decoder.decode())
-        .await
-        .expect("The ImageDecoder was closed before the image had finished decoding.");
-
-    let frame = ImageDecodeResult::get_image(&ImageDecodeResult::from(decoded));
-
-    let width = frame.coded_width();
-    let height = frame.coded_height();
-
-    let mut buffer: Vec<u8> = vec![0; (width * height * 4) as usize];
-
-    let options = VideoFrameCopyToOptions::new();
-    options.set_format("RGBA");
-
-    JsFuture::from(frame.copy_to_with_u8_slice_and_options(&mut buffer, &options))
-        .await
-        .map_err(|err| FileTextureError {
-            error: TextureError::TranscodeError(err.as_string().unwrap_or_default()),
-            path: format!("{}", path.display()),
-        })?;
-
-    Ok(DynamicImage::ImageRgba8(
-        image::RgbaImage::from_raw(width, height, buffer)
-            .expect("Invalid image size when creating RgbaImage"),
-    ))
 }
