@@ -1,8 +1,6 @@
 # Bevy Web Codecs
 
-This crate is makes use of the [WebCodecs API](https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API) to decode images.
-
-When the WebCodecs API is unavailable, it fallsback to the canvas API.
+This crate is makes use of the [WebCodecs API](https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API) to decode images and fallsback to the canvas API when its unavailable.
 
 This crate is only supported on wasm targets.
 
@@ -20,6 +18,27 @@ fn main() {
 ```
 
 It's recommended that you turn off bevy's default features so you can disable "png" support so that it doesn't clash with this plugin's png loader.
+
+### glTF Support
+
+```rust
+use bevy::prelude::*;
+use bevy_web_codecs::WebCodecsPlugin;
+use bevy_web_codecs_gltf::{GltfAssetLabel, GltfPlugin};
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins,
+            WebCodecsPlugin::default(),
+            GltfPlugin::default(),
+        ))
+        .add_systems(Startup, setup)
+        .run();
+}
+```
+
+You will have to disable bevy's `bevy_gltf` feature .
 
 ## Supported types
 

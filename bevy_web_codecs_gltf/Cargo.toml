@@ -2,7 +2,7 @@
 name = "bevy_web_codecs_gltf"
 version = "0.16.1"
 edition = "2024"
-description = "Bevy Engine GLTF loading"
+description = "A fork of bevy_gltf which decodes images using bevy_web_codecs"
 repository = "https://github.com/jf908/bevy_web_codecs"
 keywords = ["gamedev", "wasm", "bevy"]
 license = "MIT OR Apache-2.0"

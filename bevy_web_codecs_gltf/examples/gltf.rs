@@ -7,9 +7,11 @@ use bevy_web_codecs_gltf::{GltfAssetLabel, GltfPlugin};
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugins(WebCodecsPlugin::default())
-        .add_plugins(GltfPlugin::default())
+        .add_plugins((
+            DefaultPlugins,
+            WebCodecsPlugin::default(),
+            GltfPlugin::default(),
+        ))
         .add_systems(Startup, setup)
         .run();
 }
