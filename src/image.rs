@@ -40,6 +40,13 @@ pub enum WebImageLoaderError {
     FileTexture(#[from] FileTextureError),
 }
 
+#[derive(Error, Debug)]
+#[error("Error reading image file {path}: {error}")]
+pub struct FileTextureError {
+    error: TextureError,
+    path: String,
+}
+
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub enum ImageFormatSetting {
     #[default]
@@ -64,7 +71,7 @@ impl Default for ImageLoaderSettings {
     }
 }
 
-/// Asset loader for Jpeg files.
+/// Asset loader for images.
 pub struct WebImageLoader {
     mime_types: HashMap<&'static str, &'static str>,
     extensions: Vec<&'static str>,
@@ -165,11 +172,4 @@ impl AssetLoader for WebImageLoader {
     fn extensions(&self) -> &[&str] {
         &self.extensions
     }
-}
-
-#[derive(Error, Debug)]
-#[error("Error reading image file {path}: {error}")]
-pub struct FileTextureError {
-    error: TextureError,
-    path: String,
 }
