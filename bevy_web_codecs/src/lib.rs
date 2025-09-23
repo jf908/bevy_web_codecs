@@ -4,7 +4,7 @@ use bevy_platform::collections::HashMap;
 
 use crate::image::WebImageLoader;
 
-mod image;
+pub mod image;
 
 pub struct WebCodecsPlugin {
     pub image_types: HashMap<&'static str, &'static str>,

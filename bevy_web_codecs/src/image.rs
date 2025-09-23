@@ -104,6 +104,40 @@ impl WebImageLoader {
     pub fn supports_image_decoder() -> bool {
         BevyImageDecoder::supportsImageDecoder()
     }
+
+    pub async fn from_buffer(
+        bytes: &[u8],
+        mime_type: &str,
+        is_srgb: bool,
+        sampler: ImageSampler,
+        asset_usage: RenderAssetUsages,
+    ) -> Result<Image, TextureError> {
+        let decoder = BevyImageDecoder::new();
+        decoder
+            .decode(bytes, mime_type)
+            .await
+            .map_err(|err| TextureError::TranscodeError(err.to_string().into()))?;
+
+        let width = decoder.width();
+        let height = decoder.height();
+
+        let mut buffer: Vec<u8> = vec![0; (width * height * 4) as usize];
+
+        decoder
+            .copy(&mut buffer)
+            .await
+            .map_err(|err| TextureError::TranscodeError(err.to_string().into()))?;
+
+        let dynamic_image = DynamicImage::ImageRgba8(
+            image::RgbaImage::from_raw(width, height, buffer)
+                .expect("Invalid image size when creating RgbaImage"),
+        );
+
+        let mut image = Image::from_dynamic(dynamic_image, is_srgb, asset_usage);
+        image.sampler = sampler;
+
+        Ok(image)
+    }
 }
 
 impl Default for WebImageLoader {
@@ -139,34 +173,21 @@ impl AssetLoader for WebImageLoader {
 
         let path = load_context.path();
 
-        let decoder = BevyImageDecoder::new();
-        decoder
-            .decode(&bytes, mime_type)
-            .await
-            .map_err(|err| FileTextureError {
-                error: TextureError::TranscodeError(err.to_string().into()),
+        Self::from_buffer(
+            &bytes,
+            mime_type,
+            true,
+            settings.sampler.clone(),
+            settings.asset_usage,
+        )
+        .await
+        .map_err(|error| {
+            FileTextureError {
+                error,
                 path: format!("{}", path.display()),
-            })?;
-
-        let width = decoder.width();
-        let height = decoder.height();
-
-        let mut buffer: Vec<u8> = vec![0; (width * height * 4) as usize];
-
-        decoder
-            .copy(&mut buffer)
-            .await
-            .map_err(|err| FileTextureError {
-                error: TextureError::TranscodeError(err.to_string().into()),
-                path: format!("{}", path.display()),
-            })?;
-
-        let dyn_img = DynamicImage::ImageRgba8(
-            image::RgbaImage::from_raw(width, height, buffer)
-                .expect("Invalid image size when creating RgbaImage"),
-        );
-
-        Ok(Image::from_dynamic(dyn_img, true, settings.asset_usage))
+            }
+            .into()
+        })
     }
 
     fn extensions(&self) -> &[&str] {

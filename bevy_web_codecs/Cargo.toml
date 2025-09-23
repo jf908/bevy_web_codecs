@@ -1,12 +1,12 @@
 [package]
 name = "bevy_web_codecs"
 version = "0.1.0"
-description = "A plugin for Bevy that uses the WebCodecs API for decoding assets on the web"
 edition = "2024"
+description = "A plugin for Bevy that uses the WebCodecs API for decoding assets on the web"
+repository = "https://github.com/jf908/bevy_web_codecs"
 keywords = ["gamedev", "wasm", "bevy"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/jf908/bevy_web_codecs"
 
 [dependencies]
 bevy_app = "0.16"
