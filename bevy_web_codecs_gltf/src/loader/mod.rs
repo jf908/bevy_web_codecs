@@ -1326,8 +1326,8 @@ fn load_node(
     }
 
     // create camera node
-    if settings.load_cameras {
-        if let Some(camera) = gltf_node.camera() {
+    if settings.load_cameras
+        && let Some(camera) = gltf_node.camera() {
             let projection = match camera.projection() {
                 gltf::camera::Projection::Orthographic(orthographic) => {
                     let xmag = orthographic.xmag();
@@ -1369,7 +1369,6 @@ fn load_node(
 
             *active_camera_found = true;
         }
-    }
 
     // Map node index to entity
     node_index_to_entity_map.insert(gltf_node.index(), node.id());
@@ -1378,8 +1377,8 @@ fn load_node(
 
     node.with_children(|parent| {
         // Only include meshes in the output if they're set to be retained in the MAIN_WORLD and/or RENDER_WORLD by the load_meshes flag
-        if !settings.load_meshes.is_empty() {
-            if let Some(mesh) = gltf_node.mesh() {
+        if !settings.load_meshes.is_empty()
+            && let Some(mesh) = gltf_node.mesh() {
                 // append primitives
                 for primitive in mesh.primitives() {
                     let material = primitive.material();
@@ -1462,10 +1461,9 @@ fn load_node(
                     }
                 }
             }
-        }
 
-        if settings.load_lights {
-            if let Some(light) = gltf_node.light() {
+        if settings.load_lights
+            && let Some(light) = gltf_node.light() {
                 match light.kind() {
                     gltf::khr_lights_punctual::Kind::Directional => {
                         let mut entity = parent.spawn(DirectionalLight {
@@ -1531,7 +1529,6 @@ fn load_node(
                     }
                 }
             }
-        }
 
         // append other nodes
         for child in gltf_node.children() {
@@ -1558,8 +1555,8 @@ fn load_node(
     });
 
     // Only include meshes in the output if they're set to be retained in the MAIN_WORLD and/or RENDER_WORLD by the load_meshes flag
-    if !settings.load_meshes.is_empty() {
-        if let (Some(mesh), Some(weights)) = (gltf_node.mesh(), morph_weights) {
+    if !settings.load_meshes.is_empty()
+        && let (Some(mesh), Some(weights)) = (gltf_node.mesh(), morph_weights) {
             let primitive_label = mesh.primitives().next().map(|p| GltfAssetLabel::Primitive {
                 mesh: mesh.index(),
                 primitive: p.index(),
@@ -1568,7 +1565,6 @@ fn load_node(
                 primitive_label.map(|label| load_context.get_label_handle(label.to_string()));
             node.insert(MorphWeights::new(weights, first_mesh)?);
         }
-    }
 
     if let Some(err) = gltf_error {
         Err(err)

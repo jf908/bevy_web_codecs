@@ -1,4 +1,4 @@
-//! Test the WebCodecs version of GltfPlugin by loading a gltf file that contains jpegs without
+//! Test the `WebCodecs` version of `GltfPlugin` by loading a gltf file that contains jpegs without
 //! bevy's jpeg feature enabled.
 
 use bevy::prelude::*;
