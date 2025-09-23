@@ -1,0 +1,66 @@
+[package]
+name = "bevy_web_codecs"
+version = "0.1.0"
+description = "A plugin for Bevy that uses the WebCodecs API for decoding assets on the web"
+edition = "2024"
+keywords = ["gamedev", "wasm", "bevy"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/jf908/bevy_web_codecs"
+
+[dependencies]
+bevy_app = "0.16"
+bevy_asset = "0.16"
+bevy_image = "0.16"
+bevy_log = "0.16"
+bevy_platform = "0.16"
+
+anyhow = "1.0"
+thiserror = "2.0"
+serde = "1.0"
+image = { version = "0.25", default-features = false }
+js-sys = { version = "0.3" }
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+
+[dev-dependencies]
+bevy = { version = "0.16", default-features = false, features = [
+  "std",
+  "async_executor",
+  "android-game-activity",
+  "android_shared_stdcxx",
+  "animation",
+  "bevy_asset",
+  "bevy_audio",
+  "bevy_color",
+  "bevy_core_pipeline",
+  "bevy_gilrs",
+  "bevy_gizmos",
+  "bevy_gltf",
+  "bevy_input_focus",
+  "bevy_log",
+  "bevy_mesh_picking_backend",
+  "bevy_pbr",
+  "bevy_picking",
+  "bevy_render",
+  "bevy_scene",
+  "bevy_sprite",
+  "bevy_sprite_picking_backend",
+  "bevy_state",
+  "bevy_text",
+  "bevy_ui",
+  "bevy_ui_picking_backend",
+  "bevy_window",
+  "bevy_winit",
+  "custom_cursor",
+  "default_font",
+  "hdr",
+  "multi_threaded",
+  # "png",
+  "smaa_luts",
+  "sysinfo_plugin",
+  "tonemapping_luts",
+  "vorbis",
+  "webgl2",
+  "x11",
+] }
