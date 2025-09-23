@@ -7,10 +7,10 @@ use std::{
 };
 
 #[cfg(feature = "bevy_animation")]
-use bevy_animation::{AnimationTarget, AnimationTargetId, prelude::*};
+use bevy_animation::{prelude::*, AnimationTarget, AnimationTargetId};
 use bevy_asset::{
-    AssetLoadError, AssetLoader, Handle, LoadContext, ReadAssetBytesError, RenderAssetUsages,
-    io::Reader,
+    io::Reader, AssetLoadError, AssetLoader, Handle, LoadContext, ReadAssetBytesError,
+    RenderAssetUsages,
 };
 use bevy_color::{Color, LinearRgba};
 use bevy_core_pipeline::prelude::Camera3d;
@@ -26,14 +26,14 @@ use bevy_image::{
 };
 use bevy_math::{Mat4, Vec3};
 use bevy_mesh::{
-    Indices, Mesh, MeshVertexAttribute, PrimitiveTopology, VertexAttributeValues,
     morph::{MeshMorphWeights, MorphAttributes, MorphTargetImage, MorphWeights},
     skinning::{SkinnedMesh, SkinnedMeshInverseBindposes},
+    Indices, Mesh, MeshVertexAttribute, PrimitiveTopology, VertexAttributeValues,
 };
 #[cfg(feature = "pbr_transmission_textures")]
 use bevy_pbr::UvChannel;
 use bevy_pbr::{
-    DirectionalLight, MAX_JOINTS, MeshMaterial3d, PointLight, SpotLight, StandardMaterial,
+    DirectionalLight, MeshMaterial3d, PointLight, SpotLight, StandardMaterial, MAX_JOINTS,
 };
 use bevy_platform::collections::{HashMap, HashSet};
 use bevy_render::{
@@ -50,10 +50,10 @@ use bevy_transform::components::Transform;
 
 use bevy_web_codecs::image::WebImageLoader;
 use gltf::{
-    Document, Material, Node, Semantic,
     accessor::Iter,
     image::Source,
-    mesh::{Mode, util::ReadIndices},
+    mesh::{util::ReadIndices, Mode},
+    Document, Material, Node, Semantic,
 };
 
 use serde::{Deserialize, Serialize};
@@ -64,8 +64,8 @@ use thiserror::Error;
 use tracing::{error, info_span, warn};
 
 use crate::{
-    Gltf, GltfAssetLabel, GltfExtras, GltfMaterialExtras, GltfMaterialName, GltfMeshExtras,
-    GltfNode, GltfSceneExtras, GltfSkin, vertex_attributes::convert_attribute,
+    vertex_attributes::convert_attribute, Gltf, GltfAssetLabel, GltfExtras, GltfMaterialExtras,
+    GltfMaterialName, GltfMeshExtras, GltfNode, GltfSceneExtras, GltfSkin,
 };
 
 #[cfg(feature = "bevy_animation")]
@@ -253,10 +253,10 @@ async fn load_gltf<'a, 'b, 'c>(
 
     #[cfg(feature = "bevy_animation")]
     let (animations, named_animations, animation_roots) = {
-        use bevy_animation::{VariableCurve, animated_field, animation_curves::*, gltf_curves::*};
+        use bevy_animation::{animated_field, animation_curves::*, gltf_curves::*, VariableCurve};
         use bevy_math::{
-            Quat, Vec4,
             curve::{ConstantCurve, Interval, UnevenSampleAutoCurve},
+            Quat, Vec4,
         };
         use gltf::animation::util::ReadOutputs;
         let mut animations = vec![];
@@ -1710,9 +1710,9 @@ impl<'s> Iterator for PrimitiveMorphAttributesIter<'s> {
     type Item = MorphAttributes;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let position = self.0.0.as_mut().and_then(Iterator::next);
-        let normal = self.0.1.as_mut().and_then(Iterator::next);
-        let tangent = self.0.2.as_mut().and_then(Iterator::next);
+        let position = self.0 .0.as_mut().and_then(Iterator::next);
+        let normal = self.0 .1.as_mut().and_then(Iterator::next);
+        let tangent = self.0 .2.as_mut().and_then(Iterator::next);
         if position.is_none() && normal.is_none() && tangent.is_none() {
             return None;
         }
@@ -1750,11 +1750,11 @@ mod test {
     use crate::{Gltf, GltfAssetLabel, GltfNode, GltfSkin};
     use bevy_app::{App, TaskPoolPlugin};
     use bevy_asset::{
-        AssetApp, AssetPlugin, AssetServer, Assets, Handle, LoadState,
         io::{
-            AssetSource, AssetSourceId,
             memory::{Dir, MemoryAssetReader},
+            AssetSource, AssetSourceId,
         },
+        AssetApp, AssetPlugin, AssetServer, Assets, Handle, LoadState,
     };
     use bevy_ecs::{resource::Resource, world::World};
     use bevy_log::LogPlugin;
