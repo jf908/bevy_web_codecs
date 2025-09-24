@@ -94,7 +94,6 @@ impl WebImageLoader {
         mime_types.insert("png", "image/png");
         mime_types.insert("gif", "image/gif");
         mime_types.insert("webp", "image/webp");
-        mime_types.insert("svg", "image/svg+xml");
         mime_types.insert("bmp", "image/bmp");
         mime_types.insert("avif", "image/avif");
 
