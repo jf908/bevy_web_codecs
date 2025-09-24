@@ -74,7 +74,8 @@ use bevy_web_codecs_gltf::gltf::GltfExtras;
 | .bmp       | image/bmp  |
 | .avif      | image/avif |
 
-Additional image types can be configured at startup but support will be limited by your browser.
+Registered file extensions and MIME types can be configured at startup but support will be limited
+depending on your browser.
 
 ## Bevy version support
 
