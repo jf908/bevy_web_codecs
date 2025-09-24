@@ -1,10 +1,15 @@
 # Bevy Web Codecs
 
-This crate is makes use of the [WebCodecs API](https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API) to decode images and fallsback to the canvas API when its unavailable.
+This crate is a more efficient web replacement of Bevy's default image loaders by making use of the [WebCodecs API](https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API) to decode images and fallsback to the canvas API when its unavailable. This crate parallelizes image decoding and reduces the bundle size compared to bevy_image's default decoders.
 
 This crate is only supported on wasm targets.
 
 ## Usage
+
+```toml
+[dependencies]
+bevy_web_codecs = "0.1"
+```
 
 ```rust
 use bevy::prelude::*;
@@ -21,10 +26,15 @@ It's recommended that you turn off bevy's default features so you can disable "p
 
 ### glTF Support
 
+```toml
+[dependencies]
+bevy_web_codecs_gltf = { version = "0.16", features = ["bevy_animation"] }
+```
+
 ```rust
 use bevy::prelude::*;
 use bevy_web_codecs::WebCodecsPlugin;
-use bevy_web_codecs_gltf::{GltfAssetLabel, GltfPlugin};
+use bevy_web_codecs_gltf::GltfPlugin;
 
 fn main() {
     App::new()
@@ -38,7 +48,18 @@ fn main() {
 }
 ```
 
-You will have to disable bevy's `bevy_gltf` feature .
+You will have to disable bevy's `bevy_gltf` feature and replace any imports:
+
+```rust
+// Before
+use bevy::prelude::*;
+use bevy::gltf::GltfExtras;
+
+// After
+use bevy::prelude::*;
+use bevy_web_codecs_gltf::prelude::*;::*;
+use bevy_web_codecs_gltf::gltf::GltfExtras;
+```
 
 ## Supported types
 
@@ -57,9 +78,9 @@ Additional image types can be configured at startup but support will be limited 
 
 ## Bevy version support
 
-| bevy | bevy_web_codecs |
-| ---- | --------------- |
-| 0.16 | 0.1             |
+| bevy | bevy_web_codecs | bevy_web_codecs_gltf |
+| ---- | --------------- | --- |
+| 0.16 | 0.1             | 0.16.1 |
 
 ## License
 
