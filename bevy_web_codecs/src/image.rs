@@ -29,7 +29,7 @@ extern "C" {
     async fn copy(this: &BevyImageDecoder, buffer: &mut [u8]) -> Result<(), Error>;
 }
 
-/// Possible errors that can be produced by [`OggLoader`]
+/// Possible errors that can be produced by [`WebImageLoader`]
 #[non_exhaustive]
 #[derive(Debug, Error)]
 pub enum WebImageLoaderError {
@@ -71,7 +71,7 @@ impl Default for ImageLoaderSettings {
     }
 }
 
-/// Asset loader for images.
+/// Web asset loader for images.
 pub struct WebImageLoader {
     mime_types: HashMap<&'static str, &'static str>,
     extensions: Vec<&'static str>,
@@ -87,6 +87,7 @@ impl WebImageLoader {
         }
     }
 
+    /// Returns a HashMap of extension and mime type pairs that are supported by most browsers.
     pub fn supported_mime_types() -> HashMap<&'static str, &'static str> {
         let mut mime_types = HashMap::new();
         mime_types.insert("jpg", "image/jpeg");
@@ -100,10 +101,13 @@ impl WebImageLoader {
         mime_types
     }
 
+    /// Returns if the current browser supports the ImageDecoder API.
     pub fn supports_image_decoder() -> bool {
         BevyImageDecoder::supportsImageDecoder()
     }
 
+    /// Loads an image from a byte buffer using the WebCodecs ImageDecoder API. Fallbacks to
+    /// the canvas API if ImageDecoder is not supported.
     pub async fn from_buffer(
         bytes: &[u8],
         mime_type: &str,
