@@ -7,11 +7,9 @@
 //! use bevy::prelude::*;
 //! use bevy_web_codecs::WebCodecsPlugin;
 //!
-//! fn main() {
-//!     App::new()
-//!         .add_plugins((DefaultPlugins, WebCodecsPlugin::default()))
-//!         .run();
-//! }
+//! App::new()
+//!     .add_plugins((DefaultPlugins, WebCodecsPlugin::default()))
+//!     .run();
 //! ```
 
 use bevy_app::{App, Plugin};
