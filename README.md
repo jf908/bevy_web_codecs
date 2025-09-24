@@ -57,7 +57,7 @@ use bevy::gltf::GltfExtras;
 
 // After
 use bevy::prelude::*;
-use bevy_web_codecs_gltf::prelude::*;::*;
+use bevy_web_codecs_gltf::prelude::*;
 use bevy_web_codecs_gltf::gltf::GltfExtras;
 ```
 
@@ -79,8 +79,8 @@ Additional image types can be configured at startup but support will be limited 
 ## Bevy version support
 
 | bevy | bevy_web_codecs | bevy_web_codecs_gltf |
-| ---- | --------------- | --- |
-| 0.16 | 0.1             | 0.16.1 |
+| ---- | --------------- | -------------------- |
+| 0.16 | 0.1             | 0.16.1               |
 
 ## License
 
