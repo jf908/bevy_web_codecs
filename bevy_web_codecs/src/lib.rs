@@ -3,13 +3,24 @@
 //! This crate parallelizes image decoding and reduces the bundle size compared to bevy_image's
 //! default decoders.
 //!
-//! ```
+//! ## Example
+//!
+//! ```no_run
 //! use bevy::prelude::*;
 //! use bevy_web_codecs::WebCodecsPlugin;
 //!
-//! App::new()
-//!     .add_plugins((DefaultPlugins, WebCodecsPlugin::default()))
-//!     .run();
+//! fn main() {
+//!     App::new()
+//!         .add_plugins((DefaultPlugins, WebCodecsPlugin::default()))
+//!         .add_systems(Startup, setup)
+//!         .run();
+//! }
+//!
+//! fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+//!     commands.spawn(Camera2d);
+//!
+//!     commands.spawn(Sprite::from_image(asset_server.load("my_image.png")));
+//! }
 //! ```
 
 use bevy_app::{App, Plugin};
@@ -18,6 +29,7 @@ use bevy_platform::collections::HashMap;
 
 use crate::image::WebImageLoader;
 
+/// Image loading and decoding
 pub mod image;
 
 /// Plugin that initiates the WebImageLoader.

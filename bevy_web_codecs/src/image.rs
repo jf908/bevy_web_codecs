@@ -40,6 +40,7 @@ pub enum WebImageLoaderError {
     FileTexture(#[from] FileTextureError),
 }
 
+/// An error that occurs when loading a texture from a file.
 #[derive(Error, Debug)]
 #[error("Error reading image file {path}: {error}")]
 pub struct FileTextureError {
