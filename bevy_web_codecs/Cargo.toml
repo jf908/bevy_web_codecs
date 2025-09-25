@@ -1,6 +1,6 @@
 [package]
 name = "bevy_web_codecs"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "A plugin for Bevy that uses the WebCodecs API for decoding assets on the web"
 repository = "https://github.com/jf908/bevy_web_codecs"
