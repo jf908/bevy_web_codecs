@@ -151,5 +151,5 @@ unused_qualifications = "warn"
 
 
 [package.metadata.docs.rs]
-rustdoc-args = ["-Zunstable-options", "--generate-link-to-definition"]
+targets = ["wasm32-unknown-unknown"]
 all-features = true

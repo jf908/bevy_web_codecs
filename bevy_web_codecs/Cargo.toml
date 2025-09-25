@@ -6,7 +6,7 @@ description = "A plugin for Bevy that uses the WebCodecs API for decoding assets
 repository = "https://github.com/jf908/bevy_web_codecs"
 keywords = ["gamedev", "wasm", "bevy"]
 license = "MIT OR Apache-2.0"
-readme = "README.md"
+readme.workspace = true
 exclude = ["assets/"]
 
 [dependencies]
@@ -65,3 +65,8 @@ bevy = { version = "0.16", default-features = false, features = [
   "webgl2",
   "x11",
 ] }
+
+
+[package.metadata.docs.rs]
+targets = ["wasm32-unknown-unknown"]
+all-features = true
