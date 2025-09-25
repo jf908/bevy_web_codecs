@@ -1,5 +1,9 @@
 # Bevy Web Codecs
 
+[![crates.io](https://img.shields.io/crates/v/bevy_web_codecs.svg)](https://crates.io/crates/bevy_web_codecs)
+[![docs.rs](https://docs.rs/bevy_web_codecs/badge.svg)](https://docs.rs/bevy_web_codecs/)
+[![license](https://img.shields.io/crates/l/bevy_web_codecs)](https://github.com/jf908/bevy_web_codecs#license)
+
 This crate is a more efficient web replacement of Bevy's default image loaders by making use of the [WebCodecs API](https://developer.mozilla.org/en-US/docs/Web/API/WebCodecs_API) to decode images and fallsback to the canvas API when its unavailable. This crate parallelizes image decoding and reduces the bundle size compared to bevy_image's default decoders.
 
 This crate is only supported on wasm targets.
