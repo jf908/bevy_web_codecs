@@ -13,7 +13,7 @@ This crate is only supported on wasm targets.
 
 ```toml
 [dependencies]
-bevy_web_codecs = "0.1"
+bevy_web_codecs = "0.2"
 ```
 
 ```rust
@@ -33,7 +33,7 @@ It's recommended that you turn off bevy's default features so you can disable "p
 
 ```toml
 [dependencies]
-bevy_web_codecs_gltf = { version = "0.16", features = ["bevy_animation"] }
+bevy_web_codecs_gltf = { version = "0.17", features = ["bevy_animation"] }
 ```
 
 ```rust
@@ -86,6 +86,7 @@ depending on your browser.
 
 | bevy | bevy_web_codecs | bevy_web_codecs_gltf |
 | ---- | --------------- | -------------------- |
+| 0.17 | 0.2             | 0.17.1               |
 | 0.16 | 0.1             | 0.16.1               |
 
 ## License

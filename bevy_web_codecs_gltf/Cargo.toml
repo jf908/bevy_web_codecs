@@ -1,6 +1,6 @@
 [package]
 name = "bevy_web_codecs_gltf"
-version = "0.16.1"
+version = "0.17.1"
 edition = "2024"
 description = "A fork of bevy_gltf which decodes images using bevy_web_codecs"
 repository = "https://github.com/jf908/bevy_web_codecs"
@@ -10,7 +10,6 @@ readme = "README.md"
 exclude = ["assets/"]
 
 [features]
-dds = ["bevy_render/dds", "bevy_image/dds", "bevy_core_pipeline/dds"]
 pbr_transmission_textures = ["bevy_pbr/pbr_transmission_textures"]
 pbr_multi_layer_material_textures = [
   "bevy_pbr/pbr_multi_layer_material_textures",
@@ -20,28 +19,28 @@ pbr_specular_textures = ["bevy_pbr/pbr_specular_textures"]
 
 [dependencies]
 # bevy
-bevy_animation = { version = "0.16.1", optional = true }
-bevy_app = { version = "0.16.1" }
-bevy_asset = { version = "0.16.1" }
-bevy_color = { version = "0.16.2" }
-bevy_core_pipeline = { version = "0.16.1" }
-bevy_ecs = { version = "0.16.1" }
-bevy_image = { version = "0.16.1" }
-bevy_math = { version = "0.16.1" }
-bevy_mesh = { version = "0.16.1" }
-bevy_pbr = { version = "0.16.1" }
-bevy_reflect = { version = "0.16.1" }
-bevy_render = { version = "0.16.1" }
-bevy_scene = { version = "0.16.1", features = ["bevy_render"] }
-bevy_transform = { version = "0.16.1" }
-bevy_tasks = { version = "0.16.1" }
-bevy_utils = { version = "0.16.1" }
-bevy_platform = { version = "0.16.1", default-features = false, features = [
+bevy_animation = { version = "0.17.1", optional = true }
+bevy_app = { version = "0.17.1" }
+bevy_asset = { version = "0.17.1" }
+bevy_color = { version = "0.17.1" }
+bevy_ecs = { version = "0.17.1" }
+bevy_image = { version = "0.17.1" }
+bevy_light = { version = "0.17.1" }
+bevy_camera = { version = "0.17.1" }
+bevy_math = { version = "0.17.1" }
+bevy_mesh = { version = "0.17.1" }
+bevy_pbr = { version = "0.17.1" }
+bevy_reflect = { version = "0.17.1" }
+bevy_render = { version = "0.17.1" }
+bevy_scene = { version = "0.17.1" }
+bevy_transform = { version = "0.17.1" }
+bevy_tasks = { version = "0.17.1" }
+bevy_platform = { version = "0.17.1", default-features = false, features = [
   "std",
   "serialize",
 ] }
 
-bevy_web_codecs = { path = "../bevy_web_codecs", version = "0.1" }
+bevy_web_codecs = { path = "../bevy_web_codecs", version = "0.2" }
 
 # other
 gltf = { version = "1.4.0", default-features = false, features = [
@@ -64,13 +63,13 @@ itertools = "0.14"
 percent-encoding = "2.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.140"
-smallvec = "1.11"
+smallvec = { version = "1", default-features = false }
 tracing = { version = "0.1", default-features = false, features = ["std"] }
 
 
 [dev-dependencies]
-bevy_log = "0.16"
-bevy = { version = "0.16", default-features = false, features = [
+bevy_log = "0.17"
+bevy = { version = "0.17", default-features = false, features = [
   "std",
   "async_executor",
   "android-game-activity",
@@ -80,6 +79,8 @@ bevy = { version = "0.16", default-features = false, features = [
   "bevy_audio",
   "bevy_color",
   "bevy_core_pipeline",
+  "bevy_post_process",
+  "bevy_anti_alias",
   "bevy_gilrs",
   "bevy_gizmos",
   # "bevy_gltf",
@@ -90,25 +91,37 @@ bevy = { version = "0.16", default-features = false, features = [
   "bevy_picking",
   "bevy_render",
   "bevy_scene",
+  "bevy_image",
+  "bevy_mesh",
+  "bevy_camera",
+  "bevy_light",
+  "bevy_shader",
   "bevy_sprite",
   "bevy_sprite_picking_backend",
+  "bevy_sprite_render",
   "bevy_state",
   "bevy_text",
   "bevy_ui",
   "bevy_ui_picking_backend",
+  "bevy_ui_render",
   "bevy_window",
   "bevy_winit",
   "custom_cursor",
   "default_font",
   "hdr",
+  "ktx2",
   "multi_threaded",
   # "png",
+  "reflect_auto_register",
   "smaa_luts",
   "sysinfo_plugin",
   "tonemapping_luts",
   "vorbis",
   "webgl2",
   "x11",
+  "wayland",
+  "debug",
+  "zstd_rust",
 ] }
 
 
@@ -148,7 +161,6 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(docsrs_dep)'] }
 unsafe_code = "deny"
 unsafe_op_in_unsafe_fn = "warn"
 unused_qualifications = "warn"
-
 
 [package.metadata.docs.rs]
 targets = ["wasm32-unknown-unknown"]
